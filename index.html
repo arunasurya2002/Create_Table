@@ -1,0 +1,361 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Creator</title>
+
+  <style>
+
+    body{
+      font-family:Arial;
+      margin:0;
+      padding:20px;
+      background:#f2f2f2;
+    }
+
+    h2{
+      text-align:center;
+    }
+
+    .toolbar{
+      background:white;
+      padding:15px;
+      border-radius:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:15px;
+      box-shadow:0 0 5px rgba(0,0,0,0.2);
+    }
+
+    input,button{
+      padding:8px;
+      border-radius:5px;
+      border:1px solid #999;
+    }
+
+    button{
+      background:#0080ff;
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#005fcc;
+    }
+
+    table{
+      border-collapse:collapse;
+      width:100%;
+      background:white;
+      margin-top:15px;
+    }
+
+    th,td{
+      border:1px solid black;
+      min-width:100px;
+      height:50px;
+      text-align:center;
+      padding:5px;
+    }
+
+    th{
+      background:#0080ff;
+      color:white;
+    }
+
+    #tableContainer{
+      overflow:auto;
+    }
+
+    .heading{
+      text-align:center;
+      font-size:28px;
+      font-weight:bold;
+      margin-top:10px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<h2>Create / Edit Table</h2>
+
+<div class="toolbar">
+
+  <input type="text" id="tableHeading" placeholder="Heading">
+
+  <input type="number" id="rows" placeholder="Rows">
+
+  <input type="number" id="cols" placeholder="Columns">
+
+  <button id="create">Create Table</button>
+
+  <button id="addRow">Add Row</button>
+
+  <button id="deleteRow">Delete Row</button>
+
+  <button id="addCol">Add Column</button>
+
+  <button id="deleteCol">Delete Column</button>
+
+  <input type="number" id="cellWidth" placeholder="TD Width">
+
+  <input type="number" id="cellHeight" placeholder="TD Height">
+
+  <button id="applySize">Apply Size</button>
+
+  <label>Header BG</label>
+  <input type="color" id="headerBg" value="#0080ff">
+
+  <label>Header Text</label>
+  <input type="color" id="headerText" value="#ffffff">
+
+  <button id="applyHeaderStyle">Header Style</button>
+  
+  <button id="openPreview">Open Preview Page</button>
+
+  <button id="saveDraftMain">Save As Draft</button>
+
+  <button id="openDrafts">Saved Drafts</button>
+
+ 
+
+</div>
+
+<div class="heading" id="displayHeading"></div>
+
+<div id="tableContainer"></div>
+
+<script>
+
+let tableElement;
+
+// CREATE TABLE
+document.getElementById("create").onclick = () => {
+
+  let rows = parseInt(document.getElementById("rows").value);
+  let cols = parseInt(document.getElementById("cols").value);
+
+  let heading = document.getElementById("tableHeading").value;
+
+  document.getElementById("displayHeading").innerText = heading;
+
+  let table = document.createElement("table");
+
+  let headerRow = document.createElement("tr");
+
+  for(let j=0;j<cols;j++){
+
+    let th = document.createElement("th");
+
+    th.contentEditable = true;
+
+    th.innerText = "Header";
+
+    headerRow.appendChild(th);
+  }
+
+  table.appendChild(headerRow);
+
+  for(let i=0;i<rows;i++){
+
+    let tr = document.createElement("tr");
+
+    for(let j=0;j<cols;j++){
+
+      let td = document.createElement("td");
+
+      td.contentEditable = true;
+
+      td.innerText = " ";
+
+      tr.appendChild(td);
+    }
+
+    table.appendChild(tr);
+  }
+
+  document.getElementById("tableContainer").innerHTML = "";
+
+  document.getElementById("tableContainer").appendChild(table);
+
+  tableElement = table;
+};
+
+
+// ADD ROW
+document.getElementById("addRow").onclick = () => {
+
+  if(!tableElement) return;
+
+  let cols = tableElement.rows[0].cells.length;
+
+  let tr = document.createElement("tr");
+
+  for(let i=0;i<cols;i++){
+
+    let td = document.createElement("td");
+
+    td.contentEditable = true;
+
+    td.innerText = "New";
+
+    tr.appendChild(td);
+  }
+
+  tableElement.appendChild(tr);
+};
+
+
+// DELETE ROW
+document.getElementById("deleteRow").onclick = () => {
+
+  if(!tableElement) return;
+
+  if(tableElement.rows.length > 1){
+
+    tableElement.deleteRow(tableElement.rows.length - 1);
+  }
+};
+
+
+// ADD COLUMN
+document.getElementById("addCol").onclick = () => {
+
+  if(!tableElement) return;
+
+  for(let i=0;i<tableElement.rows.length;i++){
+
+    let cell;
+
+    if(i==0){
+
+      cell = document.createElement("th");
+
+      cell.innerText = "Header";
+
+    }else{
+
+      cell = document.createElement("td");
+
+      cell.innerText = "New";
+    }
+
+    cell.contentEditable = true;
+
+    tableElement.rows[i].appendChild(cell);
+  }
+};
+
+
+// DELETE COLUMN
+document.getElementById("deleteCol").onclick = () => {
+
+  if(!tableElement) return;
+
+  let count = tableElement.rows[0].cells.length;
+
+  if(count > 1){
+
+    for(let i=0;i<tableElement.rows.length;i++){
+
+      tableElement.rows[i].deleteCell(count - 1);
+    }
+  }
+};
+
+
+// APPLY SIZE
+document.getElementById("applySize").onclick = () => {
+
+  let width = document.getElementById("cellWidth").value;
+
+  let height = document.getElementById("cellHeight").value;
+
+  document.querySelectorAll("td").forEach(td => {
+
+    if(width) td.style.width = width + "px";
+
+    if(height) td.style.height = height + "px";
+  });
+};
+
+
+// HEADER STYLE
+document.getElementById("applyHeaderStyle").onclick = () => {
+
+  let bg = document.getElementById("headerBg").value;
+
+  let text = document.getElementById("headerText").value;
+
+  document.querySelectorAll("th").forEach(th => {
+
+    th.style.background = bg;
+
+    th.style.color = text;
+  });
+};
+
+
+// OPEN PREVIEW PAGE
+document.getElementById("openPreview").onclick = () => {
+
+  if(!tableElement) return;
+
+  let data = {
+
+    heading : document.getElementById("displayHeading").innerHTML,
+
+    table : tableElement.outerHTML
+  };
+
+  localStorage.setItem("currentTable", JSON.stringify(data));
+
+  window.open("preview.html","_blank");
+};
+  
+// SAVE AS DRAFT FROM MAIN PAGE
+document.getElementById("saveDraftMain").onclick = () => {
+
+  if(!tableElement){
+
+    alert("Create Table First");
+
+    return;
+  }
+
+  let draftData = {
+
+    heading : document.getElementById("displayHeading").innerHTML,
+
+    table : tableElement.outerHTML
+  };
+
+  let drafts = JSON.parse(
+    localStorage.getItem("draftTables")
+  ) || [];
+
+  drafts.push(draftData);
+
+  localStorage.setItem(
+    "draftTables",
+    JSON.stringify(drafts)
+  );
+
+  alert("Draft Saved");
+};
+
+
+// OPEN DRAFT PAGE
+document.getElementById("openDrafts").onclick = () => {
+
+  window.open("drafts.html","_blank");
+};
+
+</script>
+
+</body>
+</html>

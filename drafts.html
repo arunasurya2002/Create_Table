@@ -1,0 +1,437 @@
+<!-- drafts.html -->
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Saved Drafts</title>
+
+  <style>
+
+    body{
+      font-family:Arial;
+      background:#f2f2f2;
+      padding:20px;
+      margin:0;
+    }
+
+    h2{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .topBar{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      padding:8px 14px;
+      border:none;
+      border-radius:5px;
+      background:#0080ff;
+      color:white;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#005fcc;
+    }
+
+    /* ICON VIEW */
+
+    #draftContainer.iconView{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:20px;
+    }
+
+    .draftIcon{
+      background:white;
+      border-radius:12px;
+      padding:15px;
+      box-shadow:0 0 8px rgba(0,0,0,0.2);
+      text-align:center;
+    }
+
+    .icon{
+      font-size:70px;
+      margin-bottom:10px;
+    }
+
+    .title{
+      font-size:20px;
+      font-weight:bold;
+      margin-bottom:10px;
+      word-break:break-word;
+    }
+
+    .miniTable{
+      overflow:hidden;
+      max-height:120px;
+      border:1px solid #ddd;
+    }
+
+    .miniTable table{
+      width:100%;
+      border-collapse:collapse;
+      transform:scale(0.45);
+      transform-origin:top left;
+    }
+
+    /* LIST VIEW */
+
+    #draftContainer.listView{
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+    }
+
+    .draftList{
+      background:white;
+      padding:15px;
+      border-radius:10px;
+      box-shadow:0 0 8px rgba(0,0,0,0.2);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .leftArea{
+      display:flex;
+      align-items:center;
+      gap:15px;
+    }
+
+    .listIcon{
+      font-size:45px;
+    }
+
+    .listTitle{
+      font-size:22px;
+      font-weight:bold;
+      word-break:break-word;
+    }
+
+    .buttonArea{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    table{
+      border-collapse:collapse;
+      background:white;
+    }
+
+    th,td{
+      border:1px solid black;
+      padding:3px;
+      text-align:center;
+      font-size:10px;
+    }
+
+    .empty{
+      text-align:center;
+      font-size:24px;
+      margin-top:50px;
+      color:#555;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<h2>Saved Drafts</h2>
+
+<div class="topBar">
+
+  <button onclick="showIcons()">
+    Icon View
+  </button>
+
+  <button onclick="showList()">
+    List View
+  </button>
+
+  <button onclick="goMainPage()">
+    Main Page
+  </button>
+
+</div>
+
+<div id="draftContainer" class="iconView"></div>
+
+<script>
+
+let drafts = JSON.parse(
+  localStorage.getItem("draftTables")
+) || [];
+
+let container =
+  document.getElementById("draftContainer");
+
+// DEFAULT VIEW
+let currentView = "list";
+
+
+// SHOW ICON VIEW
+function showIcons(){
+
+  currentView = "icon";
+
+  renderDrafts();
+}
+
+
+// SHOW LIST VIEW
+function showList(){
+
+  currentView = "list";
+
+  renderDrafts();
+}
+
+
+// MAIN PAGE
+function goMainPage(){
+
+  window.location.href = "index.html";
+}
+
+
+// FORMAT FILE SIZE
+function getFileSize(text){
+
+  let bytes = new Blob([text]).size;
+
+  if(bytes < 1024){
+
+    return bytes + " B";
+  }
+
+  else if(bytes < 1024 * 1024){
+
+    return (bytes / 1024).toFixed(2) + " KB";
+  }
+
+  else{
+
+    return (bytes / (1024 * 1024))
+    .toFixed(2) + " MB";
+  }
+}
+
+
+// FORMAT DATE
+function formatDate(dateText){
+
+  let d = new Date(dateText);
+
+  return d.toLocaleString();
+}
+
+
+// RENDER DRAFTS
+function renderDrafts(){
+
+  container.innerHTML = "";
+
+  // VIEW TYPE
+  if(currentView == "icon"){
+
+    container.className = "iconView";
+
+  }else{
+
+    container.className = "listView";
+  }
+
+
+  // EMPTY
+  if(drafts.length == 0){
+
+    container.innerHTML = `
+      <div class="empty">
+        No Drafts Saved
+      </div>
+    `;
+
+    return;
+  }
+
+
+  // CREATE DETAILS
+  drafts.forEach((draft,index)=>{
+
+    // ADD DATE IF MISSING
+    if(!draft.savedDate){
+
+      draft.savedDate = new Date().toISOString();
+    }
+
+    // ADD LOCATION IF MISSING
+    if(!draft.location){
+
+      draft.location = "Local Storage";
+    }
+
+    let fileSize =
+      getFileSize(JSON.stringify(draft));
+
+    let saveDate =
+      formatDate(draft.savedDate);
+
+
+    // ICON VIEW
+    if(currentView == "icon"){
+
+      let div = document.createElement("div");
+
+      div.className = "draftIcon";
+
+      div.innerHTML = `
+
+        <div class="icon">
+          📄
+        </div>
+
+        <div class="title">
+          ${draft.heading || "Untitled"}
+        </div>
+
+        <div style="
+          font-size:12px;
+          color:#555;
+          margin-bottom:10px;
+          text-align:left; ">
+      
+          <div>${saveDate}</div>
+          <div>${fileSize}</div>
+          <div>${draft.location}</div>
+      
+        </div>
+
+        <div class="miniTable">
+          ${draft.table}
+        </div>
+
+        <div style="margin-top:10px;">
+
+          <button onclick="retrieveDraft(${index})">
+            Open
+          </button>
+
+          <button onclick="deleteDraft(${index})">
+            Delete
+          </button>
+
+        </div>
+
+      `;
+
+      container.appendChild(div);
+    }
+
+
+    // LIST VIEW
+    else{
+
+      let div = document.createElement("div");
+
+      div.className = "draftList";
+
+      div.innerHTML = `
+
+        <div class="leftArea">
+
+          <div class="listIcon">
+            📄
+          </div>
+
+          <div>
+
+            <div class="listTitle">
+              ${draft.heading || "Untitled"}
+            </div>
+
+            <div style="
+              font-size:13px;
+              color:#555;
+              margin-top:5px; ">
+
+              ${saveDate}
+              <br>
+
+              ${fileSize}
+              <br>
+
+              ${draft.location}
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="buttonArea">
+
+          <button onclick="retrieveDraft(${index})">
+            Open
+          </button>
+
+          <button onclick="deleteDraft(${index})">
+            Delete
+          </button>
+
+        </div>
+
+      `;
+
+      container.appendChild(div);
+    }
+
+  });
+
+}
+
+
+// OPEN DRAFT
+function retrieveDraft(index){
+
+  localStorage.setItem(
+    "currentTable",
+    JSON.stringify(drafts[index])
+  );
+
+  window.location.href = "preview.html";
+}
+
+
+// DELETE DRAFT
+function deleteDraft(index){
+
+  drafts.splice(index,1);
+
+  localStorage.setItem(
+    "draftTables",
+    JSON.stringify(drafts)
+  );
+
+  renderDrafts();
+}
+
+
+// INITIAL LOAD
+renderDrafts();
+
+</script>
+
+</body>
+</html>

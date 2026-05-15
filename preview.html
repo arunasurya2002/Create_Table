@@ -1,0 +1,226 @@
+<!-- preview.html -->
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Preview Table</title>
+
+  <style>
+
+    body{
+      font-family:Arial;
+      padding:20px;
+      background:#f2f2f2;
+    }
+
+    .toolbar{
+      margin-bottom:20px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      padding:10px;
+      border:none;
+      border-radius:5px;
+      background:#0080ff;
+      color:white;
+      cursor:pointer;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+    }
+
+    th,td{
+      border:1px solid black;
+      padding:5px;
+      text-align:center;
+    }
+
+    .heading{
+      text-align:center;
+      font-size:30px;
+      font-weight:bold;
+      margin-bottom:15px;
+    }
+
+    @media print{
+
+      .toolbar{
+        display:none;
+      }
+
+      body{
+        background:white;
+      }
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="toolbar">
+
+  <button onclick="printPage()">
+    Print
+  </button>
+
+  <button onclick="saveDraft()">
+    Save Draft
+  </button>
+
+  <button onclick="openDrafts()">
+    Saved Drafts
+  </button>
+
+  <button onclick="goMainPage()">
+    Main Page
+  </button>
+
+</div>
+
+<div class="heading" id="heading"></div>
+
+<div id="tableArea"></div>
+  
+
+<script>
+
+// LOAD CURRENT TABLE
+let savedData = localStorage.getItem("currentTable");
+
+if(savedData){
+
+  let saved = JSON.parse(savedData);
+
+  document.getElementById("heading").innerHTML =
+    saved.heading || "";
+
+  document.getElementById("tableArea").innerHTML =
+    saved.table || "";
+
+}else{
+
+  document.getElementById("heading").innerHTML =
+    "No Table Found";
+
+  document.getElementById("tableArea").innerHTML =
+    "";
+}
+
+
+// MAKE TABLE EDITABLE
+makeEditable();
+
+function makeEditable(){
+
+  document.querySelectorAll("#tableArea td, #tableArea th")
+  .forEach(cell => {
+
+    cell.contentEditable = true;
+  });
+}
+
+
+// PRINT PAGE
+function printPage(){
+
+  saveCurrentChanges();
+
+  setTimeout(() => {
+
+    window.print();
+
+  },200);
+}
+
+
+// SAVE CURRENT CHANGES
+function saveCurrentChanges(){
+
+  let table = document.querySelector("#tableArea table");
+
+  if(!table) return;
+
+  let updatedData = {
+
+    heading : document.getElementById("heading").innerHTML,
+
+    table : table.outerHTML
+  };
+
+  localStorage.setItem(
+    "currentTable",
+    JSON.stringify(updatedData)
+  );
+}
+
+
+// SAVE DRAFT
+function saveDraft(){
+
+  let table = document.querySelector("#tableArea table");
+
+  if(!table){
+
+    alert("No Table To Save");
+
+    return;
+  }
+
+  let updatedData = {
+
+    heading : document.getElementById("heading").innerHTML,
+
+    table : table.outerHTML
+  };
+
+  // SAVE CURRENT TABLE
+  localStorage.setItem(
+    "currentTable",
+    JSON.stringify(updatedData)
+  );
+
+  // SAVE TO DRAFTS
+  let drafts = JSON.parse(
+    localStorage.getItem("draftTables")
+  ) || [];
+
+  drafts.push(updatedData);
+
+  localStorage.setItem(
+    "draftTables",
+    JSON.stringify(drafts)
+  );
+
+  alert("Draft Saved Successfully");
+}
+
+
+// OPEN SAVED DRAFTS
+function openDrafts(){
+
+  saveCurrentChanges();
+
+  window.location.href = "drafts.html";
+}
+
+
+// GO MAIN PAGE
+function goMainPage(){
+
+  saveCurrentChanges();
+
+  window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
