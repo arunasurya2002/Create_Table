@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Monthly Expenses Bill</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  padding:10px;
+  font-family:Arial, sans-serif;
+  background:#f2f2f2;
+}
+
+#bill{
+  width:100%;
+  max-width:600px;
+  margin:auto;
+  background:#fff;
+  border:2px solid #000;
+  border-radius:10px;
+  padding:15px;
+}
+
+h1{
+  text-align:center;
+  margin:0;
+  color:#0080ff;
+}
+
+.subtitle{
+  text-align:center;
+  margin-top:5px;
+  margin-bottom:15px;
+  color:#555;
+  font-size:15px;
+}
+
+.info{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:15px;
+  font-size:16px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  background:#0080ff;
+  color:white;
+  padding:10px;
+  border:1px solid #000;
+  font-size:18px;
+}
+
+td{
+  border:1px solid #000;
+  padding:8px;
+  font-size:17px;
+}
+
+td:first-child{
+  text-align:center;
+  width:60px;
+}
+
+input{
+  width:100%;
+  border:none;
+  outline:none;
+  font-size:18px;
+  text-align:right;
+  background:transparent;
+}
+
+.totalBox{
+  margin-top:15px;
+  text-align:right;
+  font-size:30px;
+  font-weight:bold;
+  color:#000;
+}
+
+.buttonBox{
+  text-align:center;
+  margin-top:15px;
+}
+
+button{
+  padding:10px 14px;
+  margin:5px;
+  border:none;
+  border-radius:6px;
+  background:#0080ff;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#005fcc;
+}
+
+.footer{
+  text-align:center;
+  margin-top:15px;
+  color:#666;
+  font-size:14px;
+}
+
+@media(max-width:700px){
+
+  th,td{
+    font-size:14px;
+    padding:6px;
+  }
+
+  input{
+    font-size:15px;
+  }
+
+  .totalBox{
+    font-size:24px;
+  }
+
+  button{
+    width:100%;
+  }
+
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .buttonBox{
+    display:none;
+  }
+
+  #bill{
+    border:none;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="bill">
+
+  <h1>Monthly Expenses Bill</h1>
+
+  <div class="subtitle">
+    Personal Monthly Expense Tracker
+  </div>
+
+  <div class="info">
+    <div>Bill No: <b>#001</b></div>
+    <div>Date: <span id="date"></span></div>
+  </div>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Expense Description</th>
+        <th>Amount (₹)</th>
+      </tr>
+    </thead>
+
+    <tbody id="tableBody">
+
+      <tr>
+        <td>1</td>
+        <td>House Rent & Maintenance</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>2</td>
+        <td>Electricity Bill</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>3</td>
+        <td>Water Bill</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>4</td>
+        <td>Gas Bill</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>5</td>
+        <td>Groceries / Kirana</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>6</td>
+        <td>Vegetables</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>7</td>
+        <td>Milk & Dairy</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>8</td>
+        <td>Mobile Recharge</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>9</td>
+        <td>Internet / WiFi</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>10</td>
+        <td>Travel Expenses</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>11</td>
+        <td>Medical Expenses</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>12</td>
+        <td>School / Education Fees</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>13</td>
+        <td>EMI / Loans</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>14</td>
+        <td>Insurance</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+      <tr>
+        <td>15</td>
+        <td>Entertainment</td>
+        <td><input type="number" class="amount" oninput="calculateTotal()"></td>
+      </tr>
+
+    </tbody>
+
+  </table>
+
+  <div class="totalBox">
+    Total : ₹ <span id="total">0.00</span>
+  </div>
+
+  <div class="buttonBox">
+
+    <button onclick="addRow()">➕ Add Item</button>
+
+    <button onclick="deleteRow()">🗑 Delete Item</button>
+
+    <button onclick="printBill()">🖨 Print Bill</button>
+
+    <button onclick="saveDraft()">💾 Save Draft</button>
+
+    <button onclick="viewDrafts()">📂 View Drafts</button>
+
+    <button onclick="viewBills()">📄 View Bills</button>
+
+  </div>
+
+</div>
+
+<script>
+
+document.getElementById("date").innerHTML =
+new Date().toLocaleDateString();
+
+function calculateTotal(){
+
+  let total = 0;
+
+  let amounts = document.querySelectorAll(".amount");
+
+  amounts.forEach(function(input){
+
+    total += Number(input.value) || 0;
+
+  });
+
+  document.getElementById("total").innerHTML =
+  total.toFixed(2);
+
+}
+
+function addRow(){
+
+  let table = document.getElementById("tableBody");
+
+  let rowCount = table.rows.length + 1;
+
+  let row = table.insertRow();
+
+  row.innerHTML = `
+    <td>${rowCount}</td>
+    <td contenteditable="true">New Expense</td>
+    <td>
+      <input type="number" class="amount"
+      oninput="calculateTotal()">
+    </td>
+  `;
+
+}
+
+function deleteRow(){
+
+  let table = document.getElementById("tableBody");
+
+  if(table.rows.length > 1){
+
+    table.deleteRow(table.rows.length - 1);
+
+    calculateTotal();
+
+  }
+
+}
+
+function printBill(){
+
+  window.print();
+
+}
+
+function saveDraft(){
+
+  alert("Draft Saved");
+
+}
+
+function viewDrafts(){
+
+  alert("Open Drafts Page");
+
+}
+
+function viewBills(){
+
+  alert("Open Bills Page");
+
+}
+
+</script>
+
+</body>
+</html>
