@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Preview Page</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial;
+  margin:0;
+  padding:15px;
+  background:#f3f4f6;
+}
+
+.previewContainer{
+  width:100%;
+  background:white;
+  padding:15px;
+  border-radius:8px;
+}
+
+h2{
+  margin-bottom:15px;
+}
+
+.topBar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:5px;
+  background:#007bff;
+  color:white;
+}
+
+ul{
+  padding:0;
+}
+
+li{
+  list-style:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  margin-bottom:10px;
+  border:1px solid #ccc;
+  border-radius:5px;
+  background:white;
+}
+
+.previewTask{
+  flex:1;
+  word-break:break-word;
+}
+
+.completed{
+  text-decoration:line-through;
+  color:gray;
+}
+
+.actionBtn{
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:5px;
+  background:#007bff;
+  color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="previewContainer">
+
+<h2 id="title"></h2>
+
+<div class="topBar">
+
+  <button onclick="window.close()">
+    Main Page
+  </button>
+
+  <button onclick="window.print()">
+    Print
+  </button>
+
+  <button onclick="window.close()">
+    Delete Page
+  </button>
+
+</div>
+
+<ul id="previewList"></ul>
+
+</div>
+
+<script>
+
+const data =
+JSON.parse(
+  localStorage.getItem("previewData")
+);
+
+document.getElementById("title")
+.innerText = data.category;
+
+const previewList =
+document.getElementById("previewList");
+
+
+
+data.tasks.forEach(t=>{
+
+  const li =
+  document.createElement("li");
+
+  li.innerHTML = `
+
+  <input
+  type="checkbox"
+  ${t.checked ? "checked" : ""}
+  >
+
+  <span class="
+  previewTask
+  ${t.checked ? 'completed':''}
+  ">
+  ${t.text}
+  </span>
+
+  <button class="actionBtn">
+  ↑
+  </button>
+
+  <button class="actionBtn">
+  ↓
+  </button>
+
+  <button
+  class="actionBtn"
+  style="background:red;"
+  >
+  ✕
+  </button>
+
+  `;
+
+  previewList.appendChild(li);
+
+});
+
+</script>
+
+</body>
+</html>

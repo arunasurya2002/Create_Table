@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Retrieve Pages</title>
+
+<style>
+
+body{
+  font-family:Arial;
+  padding:15px;
+  background:#f3f4f6;
+}
+
+h2{
+  margin-bottom:15px;
+}
+
+.topBar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:5px;
+  background:#007bff;
+  color:white;
+}
+
+.listView .file{
+  border:1px solid #ccc;
+  background:white;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:5px;
+}
+
+.iconView{
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+}
+
+.iconView .file{
+  width:220px;
+  border:1px solid #ccc;
+  background:white;
+  padding:10px;
+  border-radius:5px;
+}
+
+.properties{
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:8px 0;
+  font-size:14px;
+  color:#444;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>
+Saved Todo Pages
+</h2>
+
+<div class="topBar">
+
+  <button onclick="window.close()">
+    Main Page
+  </button>
+
+  <button onclick="setListView()">
+    List View
+  </button>
+
+  <button onclick="setIconView()">
+    Icon View
+  </button>
+
+</div>
+
+<div
+id="files"
+class="listView"
+></div>
+
+<script>
+
+const filesDiv =
+document.getElementById("files");
+
+
+
+function renderFiles(){
+
+  filesDiv.innerHTML = "";
+
+  for(let i=0;
+    i<localStorage.length;
+    i++){
+
+    const key =
+    localStorage.key(i);
+
+    if(key.startsWith("Todo_")){
+
+      const data =
+      JSON.parse(
+        localStorage.getItem(key)
+      );
+
+      const size =
+      new Blob([
+        localStorage.getItem(key)
+      ]).size;
+
+      const div =
+      document.createElement("div");
+
+      div.className = "file";
+
+      div.innerHTML = `
+
+      <h3>
+      ${data.category}
+      </h3>
+
+      <div class="properties">
+
+        <span>
+        ${data.created}
+        </span>
+
+        <span>
+        ${size} bytes
+        </span>
+
+        <span>
+        localStorage/${key}
+        </span>
+
+      </div>
+
+      <div class="actions">
+
+        <button onclick="
+        openFile('${key}')
+        ">
+        Open
+        </button>
+
+        <button onclick="
+        deleteFile('${key}')
+        ">
+        Delete
+        </button>
+
+      </div>
+
+      `;
+
+      filesDiv.appendChild(div);
+
+    }
+
+  }
+
+}
+
+
+
+function openFile(key){
+
+  const data =
+  JSON.parse(
+    localStorage.getItem(key)
+  );
+
+  localStorage.setItem(
+    "previewData",
+    JSON.stringify(data)
+  );
+
+  window.open("previewPage.html");
+
+}
+
+
+
+function deleteFile(key){
+
+  if(confirm("Delete File?")){
+
+    localStorage.removeItem(key);
+
+    renderFiles();
+
+  }
+
+}
+
+
+
+function setListView(){
+
+  filesDiv.className =
+  "listView";
+
+}
+
+
+
+function setIconView(){
+
+  filesDiv.className =
+  "iconView";
+
+}
+
+
+
+renderFiles();
+
+</script>
+
+</body>
+</html>
