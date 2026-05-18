@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Retrieve Page</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f2f2f2;
+}
+
+/* HEADER */
+
+header{
+  background:#008040;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+}
+
+/* CONTAINER */
+
+.container{
+  padding:15px;
+}
+
+/* BUTTONS */
+
+.button-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:5px;
+  background:#008040;
+  color:white;
+  cursor:pointer;
+  font-size:15px;
+}
+
+button:hover{
+  background:#006030;
+}
+
+/* LIST VIEW */
+
+.list-view .file-card{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+  box-shadow:0 0 5px rgba(0,0,0,0.2);
+  height:170px;
+}
+
+/* ICON VIEW */
+
+.icon-view{
+  display:grid;
+
+  grid-template-columns:
+  repeat(auto-fit,minmax(210px,210px));
+
+  justify-content:center;
+
+  gap:15px;
+}
+
+.icon-view .file-card{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+  box-shadow:0 0 5px rgba(0,0,0,0.2);
+  width:210px;
+}
+
+/* CARD */
+
+.file-card{
+  position:relative;
+}
+
+/* LIST VIEW TOP SECTION */
+
+.list-view .top-section{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+/* ICON VIEW TOP SECTION */
+
+.icon-view .top-section{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+/* ICON */
+
+.file-icon{
+  font-size:55px;
+}
+
+/* FILE NAME */
+
+.file-name{
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+}
+
+/* TOTAL */
+
+.file-total{
+  background:#ffff99;
+  color:#c00000;
+  padding:6px 12px;
+  border-radius:5px;
+  font-weight:bold;
+}
+
+/* PROPERTIES */
+
+.properties-section{
+  margin-top:2px;
+  gap:10px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  
+}
+
+.property{
+  margin-top:5px;
+  
+}
+
+/* BUTTON SECTION */
+
+.action-section{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+/* EMPTY */
+
+.empty{
+  text-align:center;
+  font-size:24px;
+  margin-top:50px;
+  color:#666;
+}
+
+/* MOBILE */
+
+@media(max-width:400px){
+
+  button{
+    width:100%;
+  }
+
+  .list-view .top-section{
+    flex-direction:column;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>Retrieve Page</header>
+
+<div class="container">
+
+  <!-- BUTTONS -->
+
+  <div class="button-row">
+
+    <button onclick="goMain()">
+      Main Page
+    </button>
+
+    <button onclick="showListView()">
+      List View
+    </button>
+
+    <button onclick="showIconView()">
+      Icon View
+    </button>
+
+  </div>
+
+  <!-- FILES -->
+
+  <div id="filesContainer"
+  class="list-view"></div>
+
+</div>
+
+<script>
+
+/* FILE CONTAINER */
+
+const filesContainer=
+document.getElementById(
+  "filesContainer"
+);
+
+/* LOAD FILES */
+
+function loadFiles(viewType){
+
+  filesContainer.className=viewType;
+
+  filesContainer.innerHTML="";
+
+  /* GET SAVED FILES */
+
+  let savedFiles=
+  JSON.parse(
+    localStorage.getItem(
+      "marketFiles"
+    )
+  ) || [];
+
+  /* EMPTY */
+
+  if(savedFiles.length===0){
+
+    filesContainer.innerHTML=`
+
+      <div class="empty">
+        No Saved Files
+      </div>
+
+    `;
+
+    return;
+  }
+
+  /* CREATE FILE CARDS */
+
+  savedFiles.forEach((file,index)=>{
+
+    const card=
+    document.createElement("div");
+
+    card.className="file-card";
+
+    card.innerHTML=`
+
+      <!-- TOP SECTION -->
+
+      <div class="top-section">
+
+        <!-- ICON -->
+
+        <div class="file-icon">
+          📄
+        </div>
+
+        <!-- FILE NAME -->
+
+        <div class="file-name">
+          Saved File ${index+1}
+        </div>
+
+        <!-- TOTAL -->
+
+        <div class="file-total">
+          ₹ ${file.total || 0}
+        </div>
+
+      </div>
+
+      <!-- PROPERTIES -->
+
+      <div class="properties-section">
+
+        <div class="property">
+          ${file.date || ""}
+        </div>
+
+        <div class="property">
+          ${file.size || ""}
+        </div>
+
+        <div class="property">
+          ${file.location || ""}
+        </div>
+
+      </div>
+
+      <!-- BUTTONS -->
+
+      <div class="action-section">
+
+        <button onclick="openFile(${index})">
+          Open
+        </button>
+
+        <button onclick="deleteFile(${index})">
+          Delete
+        </button>
+
+      </div>
+
+    `;
+
+    filesContainer.appendChild(card);
+
+  });
+
+}
+
+/* OPEN FILE */
+
+function openFile(index){
+
+  let savedFiles=
+  JSON.parse(
+    localStorage.getItem(
+      "marketFiles"
+    )
+  ) || [];
+
+  localStorage.setItem(
+
+    "selectedMarketFile",
+
+    JSON.stringify(
+      savedFiles[index]
+    )
+
+  );
+
+  window.location.href=
+  "market_previewPage.html";
+
+}
+
+/* DELETE FILE */
+
+function deleteFile(index){
+
+  if(confirm(
+    "Delete this file?"
+  )){
+
+    let savedFiles=
+    JSON.parse(
+      localStorage.getItem(
+        "marketFiles"
+      )
+    ) || [];
+
+    /* REMOVE FILE */
+
+    savedFiles.splice(index,1);
+
+    /* SAVE UPDATED */
+
+    localStorage.setItem(
+
+      "marketFiles",
+
+      JSON.stringify(savedFiles)
+
+    );
+
+    /* REFRESH */
+
+    loadFiles(
+      filesContainer.className
+    );
+
+  }
+
+}
+
+/* LIST VIEW */
+
+function showListView(){
+
+  loadFiles("list-view");
+
+}
+
+/* ICON VIEW */
+
+function showIconView(){
+
+  loadFiles("icon-view");
+
+}
+
+/* MAIN PAGE */
+
+function goMain(){
+
+  window.location.href=
+  "market_mainPage.html";
+
+}
+
+/* DEFAULT */
+
+loadFiles("list-view");
+
+</script>
+
+</body>
+</html>

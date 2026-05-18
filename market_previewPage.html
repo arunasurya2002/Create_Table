@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview Page</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f2f2f2;
+}
+
+header{
+  background:#008040;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-size:24px;
+}
+
+.container{
+  padding:15px;
+}
+
+.button-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:5px;
+  background:#008040;
+  color:white;
+  cursor:pointer;
+}
+
+.preview-box{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  overflow:auto;
+}
+
+@media(max-width:768px){
+  button{
+    width:100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>Preview Page</header>
+
+<div class="container">
+
+<div class="button-row preview-controls">
+  <button onclick="goMain()">Main Page</button>
+  <button onclick="window.print()">Print</button>
+</div>
+
+<div class="preview-box" id="previewContent"></div>
+
+<style>
+.preview-box button,
+.preview-box select,
+.preview-box .button-row,
+.preview-box .dropdown-content{
+  display:none !important;
+}
+</style>
+
+</div>
+
+<script>
+const savedFiles = JSON.parse(localStorage.getItem("marketFiles")) || [];
+
+const selectedFile = JSON.parse(localStorage.getItem("selectedMarketFile"));
+
+if(selectedFile){
+  document.getElementById("previewContent").innerHTML = selectedFile.content;
+}else if(savedFiles.length > 0){
+  document.getElementById("previewContent").innerHTML = savedFiles[savedFiles.length - 1].content;
+}else{
+  document.getElementById("previewContent").innerHTML = "<h2>No Saved File</h2>";
+}
+
+function goMain(){
+  window.location.href = "market_mainPage.html";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vegetables and Fruits Market</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f2f2f2;
+}
+
+/* HEADER */
+
+header{
+  background:#008040;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+/* CONTAINER */
+
+.container{
+  width:100%;
+  max-width:1200px;
+  margin:auto;
+  padding:15px;
+}
+
+/* BUTTONS */
+
+.button-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:5px;
+  background:#008040;
+  color:white;
+  cursor:pointer;
+  font-size:15px;
+}
+
+button:hover{
+  background:#006030;
+}
+
+/* TABLES */
+
+.table-box{
+  background:white;
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:20px;
+  box-shadow:0 0 5px rgba(0,0,0,0.2);
+}
+
+.table-container{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid #999;
+  padding:4px;
+  text-align:center;
+}
+
+th{
+  background:#008040;
+  color:white;
+}
+
+/* INPUTS */
+
+input{
+  padding:4px;
+  text-align:center;
+  border:none;
+}
+
+.qty{
+  width:70px;
+}
+
+.price{
+  width:90px;
+}
+
+/* TOTAL HIGHLIGHT */
+
+.rowTotal{
+  font-weight:bold;
+}
+
+#vegTotal,
+#fruitTotal,
+#grandTotal{
+  background:#ffff66;
+  color:#c00000;
+  font-weight:bold;
+  padding:5px 10px;
+  border-radius:5px;
+}
+
+/* GRAND TOTAL BOX */
+
+.total-box{
+  background:#e8ffe8;
+  border:2px solid #008040;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+}
+
+/* OVERLAY */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:flex-start;
+  padding-top:70px;
+  z-index:1000;
+}
+
+.overlay-content{
+  background:white;
+  width:80%;
+  max-width:400px;
+  border-radius:10px;
+  padding:20px;
+  position:relative;
+}
+
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:red;
+}
+
+/* SELECT */
+
+select{
+  width:100%;
+  height:250px;
+  padding:10px;
+  font-size:18px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+  header{
+    font-size:20px;
+  }
+
+  button{
+    width:100%;
+  }
+
+  th,td{
+    font-size:14px;
+    padding:7px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>Vegetables and Fruits Market</header>
+
+<div class="container">
+
+  <!-- BUTTONS -->
+
+  <div class="button-row">
+
+    <button onclick="openVegMenu()">
+      Vegetables Menu
+    </button>
+
+    <button onclick="openFruitMenu()">
+      Fruits Menu
+    </button>
+
+    <button onclick="savePage()">
+      Save Page
+    </button>
+
+    <button onclick="openPreview()">
+      Preview Page
+    </button>
+
+    <button onclick="openRetrieve()">
+      Retrieve Page
+    </button>
+
+  </div>
+
+  <!-- VEGETABLE TABLE -->
+
+  <div class="table-box">
+
+    <h2>Vegetables Table</h2>
+
+    <div class="table-container">
+
+      <table id="vegetableTable">
+
+        <thead>
+
+          <tr>
+            <th>Vegetable</th>
+            <th>Qty kg</th>
+            <th>Price Rs.</th>
+            <th>Total Rs.</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody></tbody>
+
+        <tfoot>
+
+          <tr>
+            <td colspan="3"><b>Vegetables Total</b></td>
+            <td id="vegTotal">0</td>
+            <td></td>
+          </tr>
+
+        </tfoot>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- FRUIT TABLE -->
+
+  <div class="table-box">
+
+    <h2>Fruits Table</h2>
+
+    <div class="table-container">
+
+      <table id="fruitTable">
+
+        <thead>
+
+          <tr>
+            <th>Fruit</th>
+            <th>Qty kg</th>
+            <th>Price Rs.</th>
+            <th>Total Rs.</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody></tbody>
+
+        <tfoot>
+
+          <tr>
+            <td colspan="3"><b>Fruits Total</b></td>
+            <td id="fruitTotal">0</td>
+            <td></td>
+          </tr>
+
+        </tfoot>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- GRAND TOTAL -->
+
+  <div class="total-box">
+
+    Grand Total : ₹
+    <span id="grandTotal">0</span>
+
+  </div>
+
+</div>
+
+<!-- VEGETABLE OVERLAY -->
+
+<div class="overlay" id="vegOverlay">
+
+  <div class="overlay-content">
+
+    <button class="close-btn" onclick="closeVegMenu()">
+      X
+    </button>
+
+    <h3>Select Vegetables</h3>
+
+    <select id="vegetableSelect" multiple>
+
+      <option>Tomato</option>
+      <option>Potato</option>
+      <option>Onion</option>
+      <option>Carrot</option>
+      <option>Cabbage</option>
+      <option>Beans</option>
+      <option>Brinjal</option>
+      <option>Cauliflower</option>
+
+      <option>Lemon</option>
+      <option>Garlic</option>
+      <option>Green Leaves</option>
+      <option>Beetroot</option>
+      <option>Ladies Finger</option>
+      <option>Beera</option>
+
+    </select>
+
+    <br><br>
+
+    <button onclick="addVegetables()">
+      Add Vegetables
+    </button>
+
+  </div>
+
+</div>
+
+<!-- FRUIT OVERLAY -->
+
+<div class="overlay" id="fruitOverlay">
+
+  <div class="overlay-content">
+
+    <button class="close-btn" onclick="closeFruitMenu()">
+      X
+    </button>
+
+    <h3>Select Fruits</h3>
+
+    <select id="fruitSelect" multiple>
+
+      <option>Apple</option>
+      <option>Banana</option>
+      <option>Mango</option>
+      <option>Orange</option>
+      <option>Grapes</option>
+      <option>Papaya</option>
+      <option>Pineapple</option>
+      <option>Watermelon</option>
+
+    </select>
+
+    <br><br>
+
+    <button onclick="addFruits()">
+      Add Fruits
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+/* OVERLAY FUNCTIONS */
+
+function openVegMenu(){
+
+  document.getElementById("vegOverlay")
+  .style.display="flex";
+
+}
+
+function closeVegMenu(){
+
+  document.getElementById("vegOverlay")
+  .style.display="none";
+
+}
+
+function openFruitMenu(){
+
+  document.getElementById("fruitOverlay")
+  .style.display="flex";
+
+}
+
+function closeFruitMenu(){
+
+  document.getElementById("fruitOverlay")
+  .style.display="none";
+
+}
+
+/* ADD VEGETABLES */
+
+function addVegetables(){
+
+  const select=
+  document.getElementById("vegetableSelect");
+
+  const tbody=
+  document.querySelector("#vegetableTable tbody");
+
+  Array.from(select.selectedOptions)
+  .forEach(option=>{
+
+    if(document.getElementById(
+      "veg-"+option.value
+    )){
+      return;
+    }
+
+    const row=document.createElement("tr");
+
+    row.id="veg-"+option.value;
+
+    row.innerHTML=`
+
+      <td>${option.value}</td>
+
+      <td>
+        <input
+          type="number"
+          value="1"
+          class="qty"
+        >
+      </td>
+
+      <td>
+        <input
+          type="number"
+          value=" "
+          class="price"
+        >
+      </td>
+
+      <td class="rowTotal">0</td>
+
+      <td>
+        <button onclick="deleteRow(this)">
+          Delete
+        </button>
+      </td>
+
+    `;
+
+    tbody.appendChild(row);
+
+  });
+
+  addEvents();
+
+  calculateTotals();
+
+  closeVegMenu();
+
+}
+
+/* ADD FRUITS */
+
+function addFruits(){
+
+  const select=
+  document.getElementById("fruitSelect");
+
+  const tbody=
+  document.querySelector("#fruitTable tbody");
+
+  Array.from(select.selectedOptions)
+  .forEach(option=>{
+
+    if(document.getElementById(
+      "fruit-"+option.value
+    )){
+      return;
+    }
+
+    const row=document.createElement("tr");
+
+    row.id="fruit-"+option.value;
+
+    row.innerHTML=`
+
+      <td>${option.value}</td>
+
+      <td>
+        <input
+          type="number"
+          value="1"
+          class="qty"
+        >
+      </td>
+
+      <td>
+        <input
+          type="number"
+          value=" "
+          class="price"
+        >
+      </td>
+
+      <td class="rowTotal">0</td>
+
+      <td>
+        <button onclick="deleteRow(this)">
+          Delete
+        </button>
+      </td>
+
+    `;
+
+    tbody.appendChild(row);
+
+  });
+
+  addEvents();
+
+  calculateTotals();
+
+  closeFruitMenu();
+
+}
+
+/* EVENTS */
+
+function addEvents(){
+
+  document.querySelectorAll(".qty,.price")
+  .forEach(input=>{
+
+    input.removeEventListener(
+      "input",
+      calculateTotals
+    );
+
+    input.addEventListener(
+      "input",
+      calculateTotals
+    );
+
+  });
+
+}
+
+/* DELETE ROW */
+
+function deleteRow(button){
+
+  button.closest("tr").remove();
+
+  calculateTotals();
+
+}
+
+/* CALCULATE TOTALS */
+
+function calculateTotals(){
+
+  let vegTotal=0;
+
+  let fruitTotal=0;
+
+  /* VEGETABLES */
+
+  document.querySelectorAll(
+    "#vegetableTable tbody tr"
+  )
+  .forEach(row=>{
+
+    const qty=
+    Number(
+      row.querySelector(".qty").value
+    ) || 0;
+
+    const price=
+    Number(
+      row.querySelector(".price").value
+    ) || 0;
+
+    const total=qty*price;
+
+    row.querySelector(".rowTotal")
+    .innerText=total;
+
+    vegTotal+=total;
+
+  });
+
+  /* FRUITS */
+
+  document.querySelectorAll(
+    "#fruitTable tbody tr"
+  )
+  .forEach(row=>{
+
+    const qty=
+    Number(
+      row.querySelector(".qty").value
+    ) || 0;
+
+    const price=
+    Number(
+      row.querySelector(".price").value
+    ) || 0;
+
+    const total=qty*price;
+
+    row.querySelector(".rowTotal")
+    .innerText=total;
+
+    fruitTotal+=total;
+
+  });
+
+  /* DISPLAY TOTALS */
+
+  document.getElementById("vegTotal")
+  .innerText=vegTotal;
+
+  document.getElementById("fruitTotal")
+  .innerText=fruitTotal;
+
+  document.getElementById("grandTotal")
+  .innerText=vegTotal+fruitTotal;
+
+}
+
+/* SAVE PAGE */
+
+function savePage(){
+
+  const data={
+
+    content:document.body.innerHTML,
+
+    date:new Date().toLocaleString(),
+
+    total:
+    document.getElementById("grandTotal")
+    .innerText
+
+  };
+
+  let files=
+  JSON.parse(
+    localStorage.getItem("marketFiles")
+  ) || [];
+
+  files.push(data);
+
+  localStorage.setItem(
+    "marketFiles",
+    JSON.stringify(files)
+  );
+
+  alert("Page Saved Successfully");
+
+}
+
+/* PREVIEW PAGE */
+
+function openPreview(){
+
+  localStorage.setItem(
+    "previewContent",
+    document.body.innerHTML
+  );
+
+  window.open(
+    "market_previewPage.html",
+    "_blank"
+  );
+
+}
+
+/* RETRIEVE PAGE */
+
+function openRetrieve(){
+
+  window.location.href=
+  "market_retrievePage.html";
+
+}
+
+</script>
+
+</body>
+</html>
