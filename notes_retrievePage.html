@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Retrieve Page</title>
+
+  <style>
+
+    body{
+      font-family:Arial;
+      background:#f2f2f2;
+      padding:20px;
+      margin:0;
+    }
+
+    h1{
+      text-align:center;
+    }
+
+    .topButtons{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    button{
+      padding:10px 15px;
+      border:none;
+      border-radius:5px;
+      color:white;
+      cursor:pointer;
+      margin:5px;
+    }
+
+    .blue{ background:#007bff; }
+    .green{ background:green; }
+    .purple{ background:purple; }
+    .red{ background:red; }
+
+    /* LIST VIEW */
+
+    .listView .file{
+      background:white;
+      padding:10px;
+      margin-bottom:10px;
+      border-radius:8px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      height:130px;
+      overflow:hidden;
+    }
+
+    /* ICON VIEW */
+
+    .iconView{
+      display:flex;
+      flex-wrap:wrap;
+      gap:15px;
+    }
+
+    .iconView .file{
+      width:180px;
+      background:white;
+      border-radius:8px;
+      padding:10px;
+      text-align:center;
+    }
+
+    .icon{
+      font-size:50px;
+    }
+
+    .fileInfo{
+      margin-top:10px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<h1>Retrieve Files</h1>
+
+<div class="topButtons">
+
+  <button class="green"
+    onclick="goMain()">
+    Go To Main Page
+  </button>
+  
+  <button class="blue"
+    onclick="setListView()">
+    List View
+  </button>
+
+  <button class="purple"
+    onclick="setIconView()">
+    Icon View
+  </button>  
+
+</div>
+
+<div id="fileContainer"
+     class="listView"></div>
+
+<script>
+
+let viewType = "list";
+
+function loadFiles(){
+
+  const files =
+    JSON.parse(
+      localStorage.getItem("shortNotesFiles")
+    ) || [];
+
+  const container =
+    document.getElementById("fileContainer");
+
+  container.innerHTML = "";
+
+  if(viewType === "list"){
+
+    container.className = "listView";
+
+  }else{
+
+    container.className = "iconView";
+  }
+
+  files.forEach((file,index)=>{
+
+    const div = document.createElement("div");
+    div.className = "file";
+
+    div.innerHTML = `
+
+      <div>
+
+        <h3>${file.topic || "No Title"}</h3>
+    
+        <div class="icon">📄</div>
+
+        <div>
+          ${file.date}
+        </div>
+
+      </div>
+
+      <div class="fileInfo">
+       
+        <button class="blue"
+          onclick="openFile(${index})">
+          Open
+        </button>
+
+        <button class="red"
+          onclick="deleteFile(${index})">
+          Delete
+        </button>
+
+      </div>
+
+    `;
+
+    container.appendChild(div);
+  });
+
+}
+
+function openFile(index){
+
+  const files =
+    JSON.parse(
+      localStorage.getItem("shortNotesFiles")
+    );
+
+  const file = files[index];
+
+  sessionStorage.setItem(
+    "previewTopic",
+    file.topic
+  );
+
+  sessionStorage.setItem(
+    "previewParagraphs",
+    JSON.stringify(file.paragraphs)
+  );
+
+  window.location.href = "notes_previewPage.html";
+}
+
+function deleteFile(index){
+
+  let files =
+    JSON.parse(
+      localStorage.getItem("shortNotesFiles")
+    );
+
+  files.splice(index,1);
+
+  localStorage.setItem(
+    "shortNotesFiles",
+    JSON.stringify(files)
+  );
+
+  loadFiles();
+}
+
+function setListView(){
+
+  viewType = "list";
+
+  loadFiles();
+}
+
+function setIconView(){
+
+  viewType = "icon";
+
+  loadFiles();
+}
+
+function goMain(){
+
+  window.location.href = "notes_mainPage.html";
+}
+
+loadFiles();
+
+</script>
+
+</body>
+</html>

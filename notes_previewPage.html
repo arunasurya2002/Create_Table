@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Preview Page</title>
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <style>
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      padding:10px;
+      background:#f2f2f2;
+      font-family:Arial;
+    }
+
+    .container{
+      max-width:900px;
+      margin:auto;
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 0 10px rgba(0,0,0,0.2);
+    }
+
+    h1{
+      text-align:center;
+      margin-top:0;
+    }
+
+    .paragraphBox{
+      border:1px solid #ccc;
+      border-radius:10px;
+      padding:15px;
+      margin-bottom:20px;
+      background:#fafafa;
+    }
+
+    .subtitle{
+      font-size:20px;
+      font-weight:bold;
+      margin-bottom:12px;
+      color:#007bff;
+    }
+
+    .content{
+      word-wrap:break-word;
+    }
+
+    .buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:20px;
+    }
+
+    button{
+      border:none;
+      border-radius:6px;
+      padding:12px 16px;
+      color:white;
+      cursor:pointer;
+      font-size:15px;
+    }
+
+    .blue{
+      background:#007bff;
+    }
+
+    .green{
+      background:green;
+    }
+
+    @media screen and (max-width:600px){
+
+      .buttons{
+        flex-direction:column;
+      }
+
+      button{
+        width:100%;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+  
+  <h1 id="topicTitle">
+    Preview
+  </h1>
+  
+  <div class="buttons">
+
+    <button class="blue" onclick="goMainPage()">
+      Go To Main Page
+    </button>
+
+    <button class="green" onclick="printPage()">
+      Print
+    </button>
+
+  </div>
+
+  <div id="previewContainer"></div>
+
+</div>
+
+<script>
+
+/* GET DATA */
+
+const topic =
+  sessionStorage.getItem("previewTopic");
+
+const paragraphs =
+  JSON.parse(
+    sessionStorage.getItem("previewParagraphs")
+  ) || [];
+
+/* SET TOPIC */
+
+document.getElementById("topicTitle")
+        .innerText =
+        topic || "No Topic";
+
+/* LOAD PARAGRAPHS */
+
+const container =
+  document.getElementById("previewContainer");
+
+let html = "";
+
+paragraphs.forEach((para,index)=>{
+
+  html += `
+
+    <div class="paragraphBox">
+
+      <div class="subtitle">
+
+        ${para.subtitle || "Subtitle " + (index+1)}
+
+      </div>
+
+      <div class="content">
+
+        ${para.content || ""}
+
+      </div>
+
+    </div>
+
+  `;
+});
+
+container.innerHTML = html;
+
+/* MAIN PAGE */
+
+function goMainPage(){
+
+  window.location.href =
+    "notes_mainPage.html";
+}
+
+/* PRINT */
+
+function printPage(){
+
+  window.print();
+}
+
+</script>
+
+</body>
+</html>

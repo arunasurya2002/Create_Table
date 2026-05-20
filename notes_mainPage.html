@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Short Notes - Main Page</title>
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <style>
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:Arial;
+      background:#f2f2f2;
+      margin:0;
+      padding:10px;
+    }
+
+    .container{
+      width:100%;
+      max-width:950px;
+      margin:auto;
+      background:white;
+      padding:15px;
+      border-radius:12px;
+      box-shadow:0 0 10px rgba(0,0,0,0.2);
+    }
+
+    h1{
+      text-align:center;
+      margin-top:0;
+    }
+
+    .topButtons,
+    .editButtons{
+
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:15px;
+    }
+
+    button{
+      border:none;
+      border-radius:6px;
+      padding:10px;
+      color:white;
+      cursor:pointer;
+      font-size:14px;
+    }
+
+    .green{ background:green; }
+    .blue{ background:#007bff; }
+    .orange{ background:orange; }
+    .purple{ background:purple; }
+    .red{ background:red; }
+    .black{ background:black; }
+
+    input,
+    select{
+      padding:10px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      font-size:15px;
+    }
+
+    .topicInput{
+      width:100%;
+      margin-top:8px;
+      margin-bottom:15px;
+    }
+
+    .task{
+      border:1px solid #ccc;
+      border-radius:10px;
+      padding:12px;
+      margin-bottom:15px;
+      background:#fafafa;
+    }
+
+    .task.selected{
+      border:3px solid #007bff;
+      background:#eef5ff;
+    }
+
+    .taskTitle{
+      font-weight:bold;
+      margin-bottom:10px;
+    }
+      
+    #textColor{width:60px; height:40px;}
+
+    .subtitleInput{
+      width:100%;
+      margin-bottom:10px;
+    }
+
+    .editor{
+
+      min-height:120px;
+      border:1px solid #ccc;
+      border-radius:6px;
+      padding:10px;
+      background:white;
+      outline:none;
+      overflow:auto;
+
+      font-size:16px;
+      line-height:1.5;
+      font-family:Arial;
+    }
+
+    @media screen and (max-width:600px){
+
+      button{
+        width:100%;
+      }
+
+      .topButtons,
+      .editButtons{
+        flex-direction:column;
+      }
+
+      select,
+      input{
+        width:100%;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Short Notes</h1>
+
+  <!-- MAIN BUTTONS -->
+
+  <div class="topButtons">
+
+    <button class="blue"
+      onclick="savePage()">
+      Save Page
+    </button>
+
+    <button class="orange"
+      onclick="goPreview()">
+      Preview Page
+    </button>
+
+    <button class="purple"
+      onclick="goRetrieve()">
+      Retrieve Page
+    </button>
+    
+        <hr>
+
+    <button class="green"
+      onclick="addParagraph()">
+      Add Paragraph
+    </button>
+
+    <button class="red"
+      onclick="deleteSelectedParagraph()">
+      Delete Selected
+    </button>
+
+  </div>
+
+  <!-- EDIT CONTROLS -->
+
+  <div class="editButtons">
+
+    <button class="black"
+      onclick="makeBold()">
+      Bold
+    </button>
+
+    <!-- TEXT COLOR -->
+
+    <input type="color"
+      id="textColor"
+      onchange="changeColor()">
+
+    <!-- FONT SIZE -->
+
+    <select id="fontSize"
+      onchange="changeFontSize()">
+
+      <option value="14px">
+        Small
+      </option>
+
+      <option value="18px" selected>
+        Medium
+      </option>
+
+      <option value="24px">
+        Large
+      </option>
+
+      <option value="32px">
+        Extra Large
+      </option>
+
+    </select>
+
+    <!-- FONT FAMILY -->
+
+    <select id="fontFamily"
+      onchange="changeFontFamily()">
+
+      <option value="Arial">
+        Arial
+      </option>
+
+      <option value="Verdana">
+        Verdana
+      </option>
+
+      <option value="Times New Roman">
+        Times New Roman
+      </option>
+
+      <option value="Georgia">
+        Georgia
+      </option>
+
+      <option value="Courier New">
+        Courier New
+      </option>
+
+    </select>
+
+    <!-- LINE SPACING -->
+
+    <select id="lineSpacing"
+      onchange="changeLineSpacing()">
+
+      <option value="1">
+        Line 1
+      </option>
+
+      <option value="1.5" selected>
+        Line 1.5
+      </option>
+
+      <option value="2">
+        Line 2
+      </option>
+
+      <option value="2.5">
+        Line 2.5
+      </option>
+
+    </select>
+
+    <!-- BULLET -->
+
+    <button class="blue"
+      onclick="addBullet()">
+      Bullet List
+    </button>
+
+  </div>
+
+  <!-- TOPIC -->
+
+  <label>
+    <b>Topic :</b>
+  </label>
+
+  <input type="text"
+         id="topicInput"
+         class="topicInput"
+         placeholder="Enter Topic">
+
+  <!-- PARAGRAPHS -->
+
+  <div id="taskContainer"></div>
+
+</div>
+
+<script>
+
+let count = 0;
+const maxLimit = 5;
+
+let selectedEditor = null;
+
+function addParagraph(text="", subtitle=""){
+
+  if(count >= maxLimit){
+
+    alert("Maximum 5 Paragraphs Allowed");
+    return;
+  }
+
+  count++;
+
+  const div = document.createElement("div");
+
+  div.className = "task";
+
+  div.id = "task" + count;
+
+  div.innerHTML = `
+
+    <div class="taskTitle">
+
+      Paragraph ${count}
+
+    </div>
+
+    <!-- SUBTITLE -->
+
+    <input type="text"
+           class="subtitleInput"
+           placeholder="Enter Paragraph Subtitle"
+           value="${subtitle}">
+
+    <!-- TEXT EDITOR -->
+
+    <div class="editor"
+         id="editor${count}"
+         contenteditable="true"
+         onclick="selectEditor(${count})">
+
+      ${text}
+
+    </div>
+
+  `;
+
+  document.getElementById("taskContainer")
+          .appendChild(div);
+}
+
+function selectEditor(id){
+
+  document.querySelectorAll(".task")
+  .forEach(task=>{
+
+    task.classList.remove("selected");
+
+  });
+
+  document.getElementById("task"+id)
+          .classList.add("selected");
+
+  selectedEditor =
+    document.getElementById("editor"+id);
+}
+
+function deleteSelectedParagraph(){
+
+  if(!selectedEditor){
+
+    alert("Select Paragraph First");
+    return;
+  }
+
+  selectedEditor.parentElement.remove();
+
+  updateNumbers();
+
+  selectedEditor = null;
+}
+
+function updateNumbers(){
+
+  const tasks =
+    document.querySelectorAll(".task");
+
+  count = tasks.length;
+
+  tasks.forEach((task,index)=>{
+
+    task.querySelector(".taskTitle")
+        .innerText =
+        "Paragraph " + (index+1);
+
+  });
+}
+
+/* TEXT FORMATTING */
+
+function makeBold(){
+
+  document.execCommand("bold");
+}
+
+function changeColor(){
+
+  const color =
+    document.getElementById("textColor").value;
+
+  document.execCommand(
+    "foreColor",
+    false,
+    color
+  );
+}
+
+/* FIXED FONT SIZE */
+
+function changeFontSize(){
+
+  if(!selectedEditor){
+
+    alert("Select Paragraph First");
+    return;
+  }
+
+  const size =
+    document.getElementById("fontSize").value;
+
+  selectedEditor.style.fontSize = size;
+}
+
+/* FONT FAMILY */
+
+function changeFontFamily(){
+
+  if(!selectedEditor){
+
+    alert("Select Paragraph First");
+    return;
+  }
+
+  const family =
+    document.getElementById("fontFamily").value;
+
+  selectedEditor.style.fontFamily = family;
+}
+
+/* LINE SPACING */
+
+function changeLineSpacing(){
+
+  if(!selectedEditor){
+
+    alert("Select Paragraph First");
+    return;
+  }
+
+  const spacing =
+    document.getElementById("lineSpacing").value;
+
+  selectedEditor.style.lineHeight = spacing;
+}
+
+/* BULLET */
+
+function addBullet(){
+
+  document.execCommand(
+    "insertUnorderedList"
+  );
+}
+
+/* SAVE */
+
+function savePage(){
+
+  const topic =
+    document.getElementById("topicInput").value;
+
+  let paragraphs = [];
+
+  document.querySelectorAll(".task")
+  .forEach(task=>{
+
+    paragraphs.push({
+
+      subtitle:
+      task.querySelector(".subtitleInput").value,
+
+      content:
+      task.querySelector(".editor").innerHTML
+
+    });
+
+  });
+
+  const data = {
+
+    topic:topic,
+    paragraphs:paragraphs,
+    date:new Date().toLocaleString()
+
+  };
+
+  let files =
+    JSON.parse(
+      localStorage.getItem("shortNotesFiles")
+    ) || [];
+
+  files.push(data);
+
+  localStorage.setItem(
+    "shortNotesFiles",
+    JSON.stringify(files)
+  );
+
+  alert("Saved Successfully");
+}
+
+/* PREVIEW */
+
+function goPreview(){
+
+  sessionStorage.setItem(
+    "previewTopic",
+    document.getElementById("topicInput").value
+  );
+
+  let paragraphs = [];
+
+  document.querySelectorAll(".task")
+  .forEach(task=>{
+
+    paragraphs.push({
+
+      subtitle:
+      task.querySelector(".subtitleInput").value,
+
+      content:
+      task.querySelector(".editor").innerHTML
+
+    });
+
+  });
+
+  sessionStorage.setItem(
+    "previewParagraphs",
+    JSON.stringify(paragraphs)
+  );
+
+  window.location.href =
+    "notes_previewPage.html";
+}
+
+/* RETRIEVE */
+
+function goRetrieve(){
+
+  window.location.href =
+    "notes_retrievePage.html";
+}
+
+addParagraph();
+
+</script>
+
+</body>
+</html>
