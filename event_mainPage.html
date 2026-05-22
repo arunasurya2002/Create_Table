@@ -144,6 +144,61 @@
         box-shadow:none;
       }
     }
+    
+/* MOBILE RESPONSIVE DESIGN */
+
+@media screen and (max-width:768px){
+
+  body{
+    padding:10px;
+  }
+
+  .container{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+  }
+
+  h1{
+    font-size:22px;
+  }
+
+  .form-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .form-row label{
+    width:100%;
+    margin-bottom:5px;
+  }
+
+  .form-row input,
+  .form-row select,
+  .form-row textarea{
+    width:100%;
+  }
+
+  button{
+    width:100%;
+    margin-left:0;
+  }
+
+  .top-bar{
+    flex-direction:column;
+  }
+
+  .filter-box{
+    width:100%;
+  }
+
+  table{
+    display:block;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+
+}
   </style>
 </head>
 
