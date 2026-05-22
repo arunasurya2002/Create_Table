@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Manager</title>
+
+  <style>
+    body{
+      font-family:Arial, sans-serif;
+      background:#f2f2f2;
+      margin:0;
+      padding:20px;
+    }
+
+    h1{
+      text-align:center;
+      color:#333;
+    }
+
+    .container{
+      max-width:800px;
+      margin:auto;
+      background:#fff;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label{
+      font-weight:bold;
+      display:block;
+      margin-top:10px;
+    }
+
+    input, select{
+      width:60%;
+      padding:10px;
+      margin-top:5px;
+      border:1px solid #ccc;
+      border-radius:5px;
+      font-size:15px;
+      box-sizing:border-box;
+    }
+  
+   textarea{
+      width:100%;
+      padding:10px;
+      margin-top:5px;
+      border:1px solid #ccc;
+      border-radius:5px;
+      font-size:15px;
+      box-sizing:border-box;
+    }
+  
+  /* ADD THIS CSS */
+
+.form-row{
+  display:flex;
+  align-items:center;
+  margin-top:12px;
+  gap:15px;
+}
+
+.form-row label{
+  width:180px;
+  margin-top:0;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea{
+  flex:1;
+}
+    button{
+      margin-top:15px;
+      padding:10px 15px;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:15px;
+    }
+
+    .save-btn{
+      background:#28a745;
+      color:white;
+    }
+
+    .view-btn{
+      background:#007bff;
+      color:white;
+      margin-left:10px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
+    }
+
+    table th, table td{
+      border:1px solid #ccc;
+      padding:10px;
+      text-align:left;
+    }
+
+    table th{
+      background:#007bff;
+      color:white;
+    }
+
+    .top-bar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:20px;
+    }
+
+    .filter-box{
+      flex:1;
+    }
+
+    .print-btn{
+      background:#ff9800;
+      color:white;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    @media print{
+      .no-print{
+        display:none;
+      }
+
+      body{
+        background:white;
+      }
+
+      .container{
+        box-shadow:none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container" id="entryPage">
+
+  <h1>Event Entry Form</h1>
+
+ <!-- REPLACE EXISTING LABEL + INPUT BLOCKS WITH BELOW -->
+
+<div class="form-row">
+  <label>Event Name</label>
+  <input type="text" id="eventName">
+</div>
+
+<div class="form-row">
+  <label>Date</label>
+  <input type="date" id="eventDate">
+</div>
+
+<div class="form-row">
+  <label>Location</label>
+  <input type="text" id="eventLocation">
+</div>
+
+<div class="form-row">
+  <label>Category</label>
+  <select id="eventCategory">
+    <option value="">Select Category</option>
+    <option>Home</option>
+    <option>Office</option>
+    <option>Visit Tour</option>
+    <option>Shopping</option>
+    <option>Celebrations</option>
+  </select>
+</div>
+
+<div class="form-row">
+  <label>Description</label>
+  <textarea id="eventDesc" rows="4"></textarea>
+</div>
+  
+  <button class="save-btn" onclick="saveEvent()">
+    Save Event
+  </button>   
+  
+  <button class="view-btn" onclick="openViewPage()">
+    View All Events
+  </button>
+  
+</div>
+
+<!-- VIEW PAGE -->
+
+<div class="container hidden" id="viewPage">
+
+  <h1>All Event Entries</h1>
+
+  <div class="top-bar no-print">
+
+    <input type="text" id="searchInput" class="filter-box"
+    placeholder="Search by event name or category"
+    onkeyup="filterEvents()">
+
+    <button class="print-btn" onclick="window.print()">Print</button>
+
+    <button class="view-btn" onclick="goBack()">Back</button>
+
+  </div>
+
+  <table id="eventTable">
+
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Event Name</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>Category</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+
+  </table>
+
+</div>
+
+<script>
+
+  function saveEvent(){
+
+    let name = document.getElementById("eventName").value;
+    let date = document.getElementById("eventDate").value;
+    let location = document.getElementById("eventLocation").value;
+    let category = document.getElementById("eventCategory").value;
+    let desc = document.getElementById("eventDesc").value;
+
+    if(name === "" || date === ""){
+      alert("Please fill required fields");
+      return;
+    }
+
+    let events = JSON.parse(localStorage.getItem("events")) || [];
+
+    events.push({
+      name:name,
+      date:date,
+      location:location,
+      category:category,
+      desc:desc
+    });
+
+    localStorage.setItem("events", JSON.stringify(events));
+
+    alert("Event Saved Successfully");
+
+    document.getElementById("eventName").value = "";
+    document.getElementById("eventDate").value = "";
+    document.getElementById("eventLocation").value = "";
+    document.getElementById("eventCategory").value = "";
+    document.getElementById("eventDesc").value = "";
+  }
+
+  function openViewPage(){
+
+    document.getElementById("entryPage").classList.add("hidden");
+    document.getElementById("viewPage").classList.remove("hidden");
+
+    loadEvents();
+  }
+
+  function goBack(){
+
+    document.getElementById("viewPage").classList.add("hidden");
+    document.getElementById("entryPage").classList.remove("hidden");
+  }
+
+  function loadEvents(){
+
+    let events = JSON.parse(localStorage.getItem("events")) || [];
+
+    let tbody = document.querySelector("#eventTable tbody");
+
+    tbody.innerHTML = "";
+
+    events.forEach((event, index)=>{
+
+      let row = `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${event.name}</td>
+          <td>${event.date}</td>
+          <td>${event.location}</td>
+          <td>${event.category}</td>
+          <td>${event.desc}</td>
+        </tr>
+      `;
+
+      tbody.innerHTML += row;
+    });
+  }
+
+  function filterEvents(){
+
+    let input = document.getElementById("searchInput").value.toLowerCase();
+
+    let rows = document.querySelectorAll("#eventTable tbody tr");
+
+    rows.forEach(row=>{
+
+      let text = row.innerText.toLowerCase();
+
+      if(text.includes(input)){
+        row.style.display = "";
+      }
+      else{
+        row.style.display = "none";
+      }
+
+    });
+  }
+
+</script>
+
+</body>
+</html>
